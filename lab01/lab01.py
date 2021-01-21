@@ -81,7 +81,16 @@ def test3():
 
 # implement this function
 def gen_pattern(chars):
-    pass
+  mid = chars[::-1] + chars[1:]
+  mid = ".".join(mid)
+  finalThing = mid
+  for i in range(len(chars)-1):
+    newString = chars[i+1:]
+    newString = newString[::-1] + newString[1:]
+    newString = ".".join(newString)
+    newString = newString.center(len(mid), '.')
+    finalThing = finalThing + "\n" + newString
+    finalThing = newString + "\n" + finalThing
 
 def test4():
     with captured_output() as (out,err):
