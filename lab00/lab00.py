@@ -12,4 +12,6 @@ def main():
     print("your successfully created a palindrome!")
 
 if __name__ == '__main__':
-    main()
+    main()\
+    
+python lab00.py
