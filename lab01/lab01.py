@@ -91,6 +91,7 @@ def gen_pattern(chars):
     newString = newString.center(len(mid), '.')
     finalThing = finalThing + "\n" + newString
     finalThing = newString + "\n" + finalThing
+  return finalThing
 
 def test4():
     tc = unittest.TestCase()
