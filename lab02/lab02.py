@@ -106,7 +106,7 @@ def test1_2():
 ################################################################################
 # Implement this function
 def gen_passage(ngram_dict, length=100):
-    count=0
+  count=0
   totalthing=""
   while (count<length):
     token = random.choice(sorted(ngram_dict.keys()))
