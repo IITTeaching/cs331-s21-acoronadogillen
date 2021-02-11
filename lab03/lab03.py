@@ -11,23 +11,37 @@ S = TypeVar('S')
 def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
     """
     This method should sort input list lst of elements of some type T.
-
     Elements of the list are compared using function compare that takes two
     elements of type T as input and returns -1 if the left is smaller than the
     right element, 1 if the left is larger than the right, and 0 if the two
     elements are equal.
     """
-    pass
+    flag = True
+    while flag == True:
+      flag = False
+      for i in range(len(lst)-1):
+        if compare(lst[i], lst[i+1]) == 1:
+          lst[i], lst[i+1] = lst[i+1], lst[i]
+          flag = True
+    return lst
 
 def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
     """
     This method search for elem in lst using binary search.
-
     The elements of lst are compared using function compare. Returns the
     position of the first (leftmost) match for elem in lst. If elem does not
     exist in lst, then return -1.
     """
-    pass
+    high, low = len(lst)-1, 0
+    while low<=high:
+      mid = (high+low)//2
+      if compare(lst[mid], elem) == -1:
+        low = mid+1
+      elif compare(lst[mid], elem) == 1:
+        high = mid-1
+      elif compare(lst[mid], elem) == 0:
+        return mid
+    return -1
 
 class Student():
     """Custom class to test generic sorting and searching."""
@@ -112,16 +126,25 @@ class PrefixSearcher():
         Initializes a prefix searcher using a document and a maximum
         search string length k.
         """
-        pass
-
+        self.subList = []
+        for i in range(len(document)):
+          if (i+k < len(document)+1):
+            self.subList.append(document[i:i+k])
+          elif (i+k > len(document)):
+            self.subList.append(document[i:])
+        
     def search(self, q):
         """
         Return true if the document contains search string q (of
-
         length up to n). If q is longer than n, then raise an
         Exception.
         """
-        pass
+        if (len(q) > len(self.subList[0])):
+          raise Exception
+        for i in range(len(self.subList)):
+          if q in self.subList[i]:
+            return True
+        return False
 
 # 30 Points
 def test2():
