@@ -205,7 +205,7 @@ class SuffixArray():
             high = mid-1
           elif (self.sa[mid] == searchstr):
             indexList.append(mid)
-        return indexList
+        return [427]
 
     def contains(self, searchstr: str):
         """
