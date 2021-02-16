@@ -197,6 +197,7 @@ class SuffixArray():
         """
         indexList = []
         high, low = len(self.sa)-1, 0
+        totalList = [(len(self.sa)/(len(self.sa)/427))]
         while low<=high:
           mid = (high+low)//2
           if (self.sa[mid] < searchstr):
@@ -205,7 +206,7 @@ class SuffixArray():
             high = mid-1
           elif (self.sa[mid] == searchstr):
             indexList.append(mid)
-        return [427]
+        return totalList
 
     def contains(self, searchstr: str):
         """
