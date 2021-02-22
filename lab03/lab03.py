@@ -39,6 +39,8 @@ def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
         low = mid+1
       elif compare(lst[mid], elem) == 1:
         high = mid-1
+      elif compare(lst[mid], elem) == 0 and compare(lst[mid-1], elem) == 0:
+        return mid-1
       elif compare(lst[mid], elem) == 0:
         return mid
     return -1
@@ -186,35 +188,26 @@ class SuffixArray():
         """
         Creates a suffix array for document (a string).
         """
-        self.sa = []
-        for i in range(len(document)):
-          self.sa.append(document[i:])
-        self.sa = sorted(self.sa)
+        self.document = document
+        lst = list(range(0,len(document)))
+        self.lst = mysort(lst, lambda x,y:  0 if document[x:] == document[y:] else (-1 if document[x:] < document[y:] else 1))
 
     def positions(self, searchstr: str):
         """
         Returns all the positions of searchstr in the documented indexed by the suffix array.
         """
-        indexList = []
-        high, low = len(self.sa)-1, 0
-        totalList = [(len(self.sa)/(len(self.sa)/427))]
-        while low<=high:
-          mid = (high+low)//2
-          if (self.sa[mid] < searchstr):
-            low = mid+1
-          elif (self.sa[mid] > searchstr):
-            high = mid-1
-          elif (self.sa[mid] == searchstr):
-            indexList.append(mid)
-        return totalList
+        def getDoc():
+          return self.document
+        return [mybinsearch(self.lst, searchstr, lambda x,y:  0 if getDoc()[x:][:len(y)] == y else (-1 if getDoc()[x:][:len(y)] < y else 1))]
 
     def contains(self, searchstr: str):
         """
         Returns true of searchstr is coontained in document.
         """
-        for i in range(len(self.sa)):
-          if searchstr in self.sa[i]:
-            return True
+        def getDoc():
+          return self.document
+        if searchstr in getDoc():
+          return True
         return False
 
 # 40 Points
