@@ -192,7 +192,7 @@ class Queue:
         ### BEGIN SOLUTION
 	if self.tail == len(self.data)-1:
           if self.head == 0:
-            raise RuntimeError() 
+            raise RuntimeError
           else:
             thing = self.data[self.head: self.tail+1]
             self.head = 0
