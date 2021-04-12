@@ -24,10 +24,38 @@ class Heap:
 
     def heapify(self, idx=0):
         ### BEGIN SOLUTION
+        run = True
+        while(run):
+          left = Heap._left(idx)
+          right = Heap._right(idx)
+          center = idx
+          if left < len(self.data):
+            leftKey = self.key(self.data[left])
+            centerKey = self.key(self.data[center])
+            if leftKey > centerKey:
+              center = left
+          if right < len(self.data):
+            rightKey = self.key(self.data[right])
+            centerKey = self.key(self.data[center])
+            if rightKey > centerKey:
+              center = right
+          if center != idx:
+            self.data[idx], self.data[center] = self.data[center], self.data[idx]
+            idx = center
+          else:
+            run = False
         ### END SOLUTION
 
     def add(self, x):
         ### BEGIN SOLUTION
+        self.data.append(x)
+        idx = self.__len__() -1
+        while idx > 0:
+            if self.key(self.data[self._parent(idx)]) < self.key(self.data[idx]):
+                self.data[self._parent(idx)], self.data[idx] = self.data[idx], self.data[self._parent(idx)]
+                idx = self._parent(idx)
+            else:
+                break
         ### END SOLUTION
 
     def peek(self):
