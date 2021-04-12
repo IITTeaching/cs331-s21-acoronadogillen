@@ -158,6 +158,20 @@ def test_key_heap_5():
 ################################################################################
 def running_medians(iterable):
     ### BEGIN SOLUTION
+    minHeap = Heap()
+    maxHeap = Heap(key=lambda x: -x)
+    medians = [0] * len(iterable)
+    for i, x in enumerate(iterable):
+        minHeap.add(x)
+        maxHeap.add(minHeap.pop())
+        if len(maxHeap) > len(minHeap):
+            minHeap.add(maxHeap.peek())
+            maxHeap.pop() 
+        if len(minHeap) == len(maxHeap):
+            medians[i] = (minHeap.peek() + maxHeap.peek()) / 2
+        else:
+            medians[i] = minHeap.peek()
+    return medians
     ### END SOLUTION
 
 ################################################################################
@@ -202,6 +216,15 @@ def test_median_3():
 ################################################################################
 def topk(items, k, keyf):
     ### BEGIN SOLUTION
+    revkey = lambda x: keyf(x) * -1
+    min = Heap(key = revkey)
+    for item in items:
+      if len(min) < k:
+        min.add(item)
+      elif keyf(min.peek()) < keyf(item):
+        min.pop()
+        min.add(item)
+    return min.data[::-1]
     ### END SOLUTION
 
 ################################################################################
