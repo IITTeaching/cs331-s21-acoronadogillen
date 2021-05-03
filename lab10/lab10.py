@@ -15,6 +15,9 @@ class AVLTree:
 
         def rotate_left(self):
             ### BEGIN SOLUTION
+            n = self.right
+            self.val, n.val = n.val, self.val
+            self.right, n.right, self.left, n.left = n.right, n.left, n, self.left
             ### END SOLUTION
 
         @staticmethod
@@ -31,16 +34,114 @@ class AVLTree:
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
+        while AVLTree.Node.check_bf(t) == -2:
+            try:
+                if AVLTree.Node.check_bf(t.left) >= 1:
+                    t.left.rotate_left()
+            except:
+                pass 
+            t.rotate_right()
+        while AVLTree.Node.check_bf(t) == 2:
+            try:
+                
+                if AVLTree.Node.check_bf(t.right) <= -1:
+                    t.right.rotate_right()
+            except:
+                pass 
+            t.rotate_left()
         ### END SOLUTION
 
     def add(self, val):
         assert(val not in self)
         ### BEGIN SOLUTION
+        if self.root is None:
+            self.root = self.Node(val, None, None)
+            return
+        path = []
+        curNode = self.root
+        while True:
+            path.append(curNode)
+            if val < curNode.val:
+                if curNode.left:
+                    curNode = curNode.left
+                else:
+                    curNode.left = self.Node(val, None, None)
+                    break
+            else:
+                if curNode.right:
+                    curNode = curNode.right
+                else:
+                    curNode.right = self.Node(val, None, None)
+                    break
+        for x in reversed(path):
+            if abs(height(x.left) - height(x.right)) > 1:
+                self.rebalance(x)
+                break
         ### END SOLUTION
 
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
+        node = self.root
+        to_balance = []
+        prior = None
+        while True:
+            to_balance.append(node)
+            if node.val == val:
+                if self.root == node:
+                    if not node.left:
+                        self.root = node.right
+                    elif not node.right:
+                        self.root = node.left
+                    elif node.left.right:
+                        next = node.left
+                        next_prior = node
+                        while True:
+                            if next.right:
+                                next_prior, next = next, next.right
+                            else:
+                                break
+                        node.val = next.val
+                        next_prior.right = next.left
+                    else:
+                        node.val, node.left = node.left.val, node.left.left
+                elif not node.left and not node.right:
+                    if prior[1] == -1:
+                        prior[0].left = None
+                    else:
+                        prior[0].right = None
+                elif not node.left:
+                    node.val = node.right.val
+                    node.left = node.right.left
+                    node.right = node.right.right
+                elif not node.right:
+                    node.val = node.left.val
+                    node.right = node.left.right
+                    node.left = node.left.left
+                elif node.left.right:
+                    next = node.left
+                    next_prior = node
+                    while True:
+                        if next.right:
+                            next_prior = next
+                            next = next.right
+                        else:
+                            break
+                    node.val = next.val
+                    next_prior.right = next.left
+                else:
+                    node.val = node.left.val
+                    node.left = node.left.left
+                break
+            elif val < node.val:
+                prior = [node,-1]
+                node = node.left
+            elif val > node.val:
+                prior = [node, 1]
+                node = node.right
+        self.balance_all(node)
+        for i in range(len(to_balance) - 1, -1, -1):
+            self.rebalance(to_balance[i])
         ### END SOLUTION
 
     def __contains__(self, val):
