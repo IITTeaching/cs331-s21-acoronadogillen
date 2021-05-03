@@ -34,21 +34,24 @@ class AVLTree:
     @staticmethod
     def rebalance(t):
         ### BEGIN SOLUTION
-        while AVLTree.Node.check_bf(t) == -2:
-            try:
-                if AVLTree.Node.check_bf(t.left) >= 1:
-                    t.left.rotate_left()
-            except:
-                pass 
-            t.rotate_right()
-        while AVLTree.Node.check_bf(t) == 2:
-            try:
-                
-                if AVLTree.Node.check_bf(t.right) <= -1:
-                    t.right.rotate_right()
-            except:
-                pass 
-            t.rotate_left()
+        node = t
+        lHeight = AVLTree.Node.height(node.left)
+        rHeight = AVLTree.Node.height(node.right)
+        diff = rHeight - lHeight
+        if diff == 2:
+            rlHeight = AVLTree.Node.height(node.right.left)
+            rrHeight = AVLTree.Node.height(node.right.right)
+            rdiff = rrHeight - rlHeight
+            if rdiff == -1:
+                AVLTree.Node.rotate_right(node.right)
+            AVLTree.Node.rotate_left(node)
+        if diff == -2:
+            llHeight = AVLTree.Node.height(node.left.left)
+            lrHeight = AVLTree.Node.height(node.left.right)
+            ldiff = lrHeight - llHeight
+            if ldiff == 1:
+                AVLTree.Node.rotate_left(node.left)
+            AVLTree.Node.rotate_right(node)
         ### END SOLUTION
 
     def add(self, val):
@@ -82,66 +85,40 @@ class AVLTree:
     def __delitem__(self, val):
         assert(val in self)
         ### BEGIN SOLUTION
-        node = self.root
-        to_balance = []
-        prior = None
-        while True:
-            to_balance.append(node)
-            if node.val == val:
-                if self.root == node:
-                    if not node.left:
-                        self.root = node.right
-                    elif not node.right:
-                        self.root = node.left
-                    elif node.left.right:
-                        next = node.left
-                        next_prior = node
-                        while True:
-                            if next.right:
-                                next_prior, next = next, next.right
-                            else:
-                                break
-                        node.val = next.val
-                        next_prior.right = next.left
-                    else:
-                        node.val, node.left = node.left.val, node.left.left
-                elif not node.left and not node.right:
-                    if prior[1] == -1:
-                        prior[0].left = None
-                    else:
-                        prior[0].right = None
-                elif not node.left:
-                    node.val = node.right.val
-                    node.left = node.right.left
-                    node.right = node.right.right
-                elif not node.right:
-                    node.val = node.left.val
-                    node.right = node.left.right
-                    node.left = node.left.left
-                elif node.left.right:
-                    next = node.left
-                    next_prior = node
-                    while True:
-                        if next.right:
-                            next_prior = next
-                            next = next.right
-                        else:
-                            break
-                    node.val = next.val
-                    next_prior.right = next.left
-                else:
-                    node.val = node.left.val
-                    node.left = node.left.left
-                break
-            elif val < node.val:
-                prior = [node,-1]
-                node = node.left
+        def delitem_rec(node):
+            if val < node.val:
+                node.left = delitem_rec(node.left)
             elif val > node.val:
-                prior = [node, 1]
-                node = node.right
-        self.balance_all(node)
-        for i in range(len(to_balance) - 1, -1, -1):
-            self.rebalance(to_balance[i])
+                node.right = delitem_rec(node.right)
+            else:
+                if not node.left and not node.right:
+                    return None
+                elif node.left and not node.right:
+                    return node.left
+                elif node.right and not node.left:
+                    return node.right
+                else:
+                    t = node.left
+                    if not t.right:
+                        node.val = t.val
+                        node.left = t.left                        
+                    else:
+                        def del_rec(n):
+                            if n.right.right:
+                                del_rec(n.right)
+                            else:
+                                y = n.right
+                                n.right = y.left
+                                node.val = y.val
+                            if abs(AVLTree.Node.height(n.left) - AVLTree.Node.height(n.right)) >= 2:
+                                AVLTree.rebalance(n)
+                        n = t
+                        del_rec(n)
+            if abs(AVLTree.Node.height(node.left) - AVLTree.Node.height(node.right)) >= 2:
+                AVLTree.rebalance(node)
+            return node
+        self.root = delitem_rec(self.root)
+        self.size -=1
         ### END SOLUTION
 
     def __contains__(self, val):
